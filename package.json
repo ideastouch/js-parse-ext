@@ -1,0 +1,48 @@
+{
+  "name": "js-parse-ext",
+  "version": "0.1.0",
+  "description": "Extension of parse library to manage big quantities of data, even bigger than the 1000 parse limit.",
+  "main": "index.js",
+  "scripts": {
+    "test": "xo && ava"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ideastouch/js-parse-ext.git"
+  },
+  "keywords": [
+    "javascript",
+    "js",
+    "parse",
+    "parse.com",
+    "recursion."
+  ],
+  "author": "Gustavo Halperin <gustavoh@ideastouch.com> (http://www.ideastouch.com)",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/ideastouch/js-parse-ext/issues"
+  },
+  "homepage": "https://github.com/ideastouch/js-parse-ext#readme",
+  "dependencies": {
+    "js-array-ext": "^1.1.0",
+    "js-promise-recursive": "^1.1.1",
+    "parse": "^1.11.0"
+  },
+  "devDependencies": {
+    "ava": "^0.24.0",
+    "dotenv": "^4.0.0",
+    "xo": "^0.18.2"
+  },
+  "xo": {
+    "ignores": [
+      "docs/**",
+      "html/**"
+    ],
+    "extends": ".eslintrc"
+  },
+  "ava": {
+    "files": [
+      "test.js"
+    ]
+  }
+}
