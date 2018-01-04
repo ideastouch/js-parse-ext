@@ -1,6 +1,6 @@
 'use strict';
 
-const Parse = require('parse');
+const pDefer = require('p-defer');
 const arrayExt = require('js-array-ext');
 const pRecursive = require('js-promise-recursive');
 
@@ -15,11 +15,11 @@ function queryFindFullList(query, options) {
 	const limit = 100;
 	let skip = 0;
 	let list = [];
-	const promise = new Parse.Promise();
+	const deferred = pDefer();
 	query.limit(limit);
 	const recursive = objects => {
 		if (objects.length === 0) {
-			promise.resolve(list);
+			deferred.resolve(list);
 		} else {
 			list = list.concat(objects);
 			skip += limit;
@@ -29,26 +29,26 @@ function queryFindFullList(query, options) {
 		}
 	};
 	query.find(options).then(recursive);
-	return promise;
+	return deferred.promise;
 }
 
 /**
  * Destroy the whole list even if is bigger thant 1000 longer.
  * @param {Parse.Object} objects
  */
-const destroyAll = objects => pRecursive.pprocessList(arrayExt.piecesOfLength(objects, 100), Parse.Object.destroyAll);
+const destroyAll = Parse => objects => pRecursive.pprocessList(arrayExt.piecesOfLength(objects, 100), Parse.Object.destroyAll);
 
 	/**
 	 * Destroy the whole list return from the query.find.
 	 * @param {Parse.Query} query
 	 */
-function queryDestroyAll(query) {
+const queryDestroyAll = Parse => query => {
 	const limit = 100;
-	const promise = new Parse.Promise();
+	const deferred = pDefer();
 	query.limit(limit);
 	const recursive = objects => {
 		if (objects.length === 0) {
-			promise.resolve();
+			deferred.resolve();
 		} else {
 			Parse.Object.destroyAll(objects)
 			.then(() => query.find())
@@ -56,11 +56,11 @@ function queryDestroyAll(query) {
 		}
 	};
 	query.find().then(recursive);
-	return promise;
-}
-
-module.exports = {
-	queryFindFullList,
-	destroyAll,
-	queryDestroyAll
+	return deferred.promise;
 };
+
+module.exports = Parse => ({
+	queryFindFullList,
+	destroyAll: destroyAll(Parse),
+	queryDestroyAll: queryDestroyAll(Parse)
+});
